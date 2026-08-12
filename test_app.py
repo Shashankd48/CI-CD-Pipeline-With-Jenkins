@@ -1,12 +1,21 @@
+import os
 import pytest
+from dotenv import load_dotenv
 from app import app, mongo
 from bson.objectid import ObjectId
+
+load_dotenv()
 
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
-    app.config["MONGO_URI"] = "mongodb://localhost:27017/test_student_db"  # test DB
+    test_uri = os.getenv("TEST_MONGO_URI", "mongodb://localhost:27017/test_student_db")
+    app.config["MONGO_URI"] = test_uri
     client = app.test_client()
+
+    db_name = test_uri.rsplit('/', 1)[-1].split('?')[0] or "test_student_db"
+    old_db = mongo.db
+    mongo.db = mongo.cx[db_name]
 
     # Setup: clear and create test data
     with app.app_context():
@@ -19,9 +28,11 @@ def client():
         })
     yield client
 
-    # Teardown: drop DB after test
+    # Teardown: drop DB after test and restore original database binding
     with app.app_context():
-        mongo.cx.drop_database("test_student_db")
+        mongo.cx.drop_database(db_name)
+        mongo.db = old_db
+
 
 
 def test_home_page(client):
@@ -61,3 +72,12 @@ def test_delete_student(client):
     response = client.get(f'/delete/{student_id}', follow_redirects=True)
     assert response.status_code == 200
     assert b"Temp User" not in response.data
+
+
+def test_health_endpoint(client):
+    """Test /health endpoint returns JSON status response"""
+    response = client.get('/health')
+    assert response.status_code in [200, 500]
+    data = response.get_json()
+    assert "status" in data
+

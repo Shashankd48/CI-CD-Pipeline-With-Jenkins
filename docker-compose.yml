@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # MongoDB Database Service (Latest LTS Version)
+  mongodb:
+    image: mongo:8.0
+    container_name: mongo-db
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - flask-network
+
+  # Flask Web Application Service
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flask-app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo-db:27017/student_db
+      - SECRET_KEY=supersecretkey
+    depends_on:
+      - mongodb
+    networks:
+      - flask-network
+
+networks:
+  flask-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local

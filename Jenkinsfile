@@ -79,40 +79,24 @@ pipeline {
                                 # 1. Authenticate to Amazon ECR
                                 aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
-                                # 2. Create custom Docker network for inter-container communication if it doesn't exist
-                                docker network create flask-network || true
-
-                                # 3. Ensure MongoDB LTS (mongo:8.0) container is running with persistent volume
-                                if [ ! \$(docker ps -q -f name=mongo-db) ]; then
-                                    echo "Starting MongoDB LTS container with persistent volume..."
-                                    docker stop mongo-db || true
-                                    docker rm mongo-db || true
-                                    docker run -d \
-                                      --name mongo-db \
-                                      --network flask-network \
-                                      --restart unless-stopped \
-                                      -v mongo-data:/data/db \
-                                      mongo:8.0
-                                fi
-
-                                # 4. Pull new Flask application image from ECR
+                                # 2. Pull new Flask application image from ECR
                                 docker pull ${ECR_REGISTRY}/${ECR_REPO_NAME}:${env.IMAGE_TAG}
 
-                                # 5. Stop and remove existing Flask application container
+                                # 3. Stop and remove existing Flask application container
                                 docker stop flask-app || true
                                 docker rm flask-app || true
 
-                                # 6. Run new Flask application container connected to flask-network
+                                # 4. Run new Flask application container passing MONGO_URI environment variable
                                 docker run -d \
                                   --name flask-app \
-                                  --network flask-network \
                                   --restart unless-stopped \
                                   -p 5000:5000 \
-                                  -e MONGO_URI="mongodb://mongo-db:27017/student_db" \
+                                  -e MONGO_URI="${MONGO_URI}" \
                                   -e SECRET_KEY="${SECRET_KEY}" \
                                   ${ECR_REGISTRY}/${ECR_REPO_NAME}:${env.IMAGE_TAG}
 EOF
                         '''
+
                     }
                 }
             }

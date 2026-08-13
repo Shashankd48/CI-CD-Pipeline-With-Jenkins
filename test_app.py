@@ -1,6 +1,8 @@
 import os
 import pytest
 from dotenv import load_dotenv
+import certifi
+from pymongo import MongoClient
 from app import app, mongo
 from bson.objectid import ObjectId
 
@@ -10,13 +12,19 @@ load_dotenv()
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
-    test_uri = os.getenv("TEST_MONGO_URI")
+    test_uri = os.getenv("TEST_MONGO_URI") or os.getenv("MONGO_URI")
     app.config["MONGO_URI"] = test_uri
     client = app.test_client()
 
     db_name = test_uri.rsplit('/', 1)[-1].split('?')[0] or "test_student_db"
     old_db = mongo.db
-    mongo.db = mongo.cx[db_name]
+
+    if "mongodb+srv" in test_uri or "ssl=true" in test_uri.lower() or "tls=true" in test_uri.lower():
+        test_cx = MongoClient(test_uri, tlsCAFile=certifi.where())
+    else:
+        test_cx = MongoClient(test_uri)
+
+    mongo.db = test_cx[db_name]
 
     # Setup: clear and create test data
     with app.app_context():
@@ -31,8 +39,9 @@ def client():
 
     # Teardown: drop DB after test and restore original database binding
     with app.app_context():
-        mongo.cx.drop_database(db_name)
+        test_cx.drop_database(db_name)
         mongo.db = old_db
+
 
 
 

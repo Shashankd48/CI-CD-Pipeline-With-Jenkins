@@ -292,6 +292,12 @@ The CI/CD pipeline executes across 8 stages defined in [Jenkinsfile](file:///d:/
 ![Live Application & Container Verified](screenshots/22-3-finally-successfullyed-deloyed-with-success-email.png)
 *Figure 13c: Live Flask application active on EC2 (`http://<EC2_IP>:5000/`) alongside success email confirmation.*
 
+![MongoDB Atlas Data Verification](screenshots/22-4-data-stored-in-altas-mongodb-database.png)
+*Figure 13d: Student records persisted and stored securely in MongoDB Atlas cloud database.*
+
+![Flask Application Live UI](screenshots/22-5-flask-app-running.png)
+*Figure 13e: Live Flask Student Registration System UI active and running in browser.*
+
 ---
 
 ## 🧪 Local Test Verification

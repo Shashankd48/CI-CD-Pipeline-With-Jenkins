@@ -138,7 +138,7 @@ All sensitive environment variables and credentials are stored securely using Je
 
 | Credential ID | Type | Configured Value / Description |
 | :--- | :--- | :--- |
-| `aws-credentials` | Username with Password | Access Key: `AKIAZ2WBSQ5K3L4E447S` / Secret: `17Dy+JhThk...` |
+| `aws-credentials` | Username with Password | AWS Access Key ID & Secret Access Key |
 | `ec2-ssh-key` | SSH Username with Private Key | Username `ubuntu` with `jenkins-key.pem` Private Key |
 | `aws-account-id` | Secret Text | `675789571925` |
 | `aws-region` | Secret Text | `ap-south-1` |

@@ -167,14 +167,14 @@ Navigate to **Manage Jenkins** -> **Credentials** -> **System** -> **Global cred
 | :-: | :--- | :--- | :--- | :--- |
 | 1 | `aws-credentials` | Username with password | **Username**<br>**Password** | `<AWS_ACCESS_KEY_ID>`<br>`<AWS_SECRET_ACCESS_KEY>` |
 | 2 | `ec2-ssh-key` | SSH Username with private key | **Username**<br>**Private Key** | `ubuntu`<br>Select *Enter directly* -> Paste full contents of your `.pem` key |
-| 3 | `aws-account-id` | Secret text | **Secret** | `675789571925` |
+| 3 | `aws-account-id` | Secret text | **Secret** | `<YOUR_AWS_ACCOUNT_ID>` *(e.g. 123456789012)* |
 | 4 | `aws-region` | Secret text | **Secret** | `ap-south-1` |
 | 5 | `ecr-repo-name` | Secret text | **Secret** | `flask-student-app` |
 | 6 | `ec2-public-ip` | Secret text | **Secret** | `<YOUR_EC2_PUBLIC_IP>` *(e.g. 13.x.x.x from EC2 Console)* |
 | 7 | `ec2-username` | Secret text | **Secret** | `ubuntu` |
-| 8 | `notify-email` | Secret text | **Secret** | `jfriday464@gmail.com` |
-| 9 | `mongo-uri` | Secret text | **Secret** | `mongodb+srv://jfriday464_db_user:ozbICJncqdsWkKVb@student-app.9lsiu8w.mongodb.net/?appName=student-app` |
-| 10 | `flask-secret-key` | Secret text | **Secret** | `supersecretkey123` |
+| 8 | `notify-email` | Secret text | **Secret** | `<YOUR_EMAIL_ADDRESS>` *(e.g. user@gmail.com)* |
+| 9 | `mongo-uri` | Secret text | **Secret** | `mongodb+srv://<username>:<password>@cluster0.mongodb.net/student_db` |
+| 10 | `flask-secret-key` | Secret text | **Secret** | `<YOUR_SECRET_KEY>` |
 
 ---
 

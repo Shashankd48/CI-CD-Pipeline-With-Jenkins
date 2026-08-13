@@ -111,7 +111,7 @@ The CI/CD pipeline is defined in [Jenkinsfile](file:///d:/Study/HeroVired/assign
 
 ### Stage 4: Build Multi-Stage Docker Image
 - Compiles the application into a 2-stage Docker container (`builder` -> `runner`).
-- Tags image with `675789571925.dkr.ecr.ap-south-1.amazonaws.com/flask-student-app:${env.IMAGE_TAG}` and `latest`.
+- Tags image with `${ECR_REGISTRY}/${ECR_REPO_NAME}:${env.IMAGE_TAG}` and `latest`.
 
 ### Stage 5: Push to ECR
 - Authenticates against Amazon ECR via AWS CLI.
@@ -139,14 +139,15 @@ All sensitive environment variables and credentials are stored securely using Je
 | Credential ID | Type | Configured Value / Description |
 | :--- | :--- | :--- |
 | `aws-credentials` | Username with Password | AWS Access Key ID & Secret Access Key |
-| `ec2-ssh-key` | SSH Username with Private Key | Username `ubuntu` with `jenkins-key.pem` Private Key |
-| `aws-account-id` | Secret Text | `675789571925` |
-| `aws-region` | Secret Text | `ap-south-1` |
-| `ecr-repo-name` | Secret Text | `flask-student-app` |
-| `ec2-public-ip` | Secret Text | EC2 Public IP address (e.g. `13.x.x.x`) |
+| `ec2-ssh-key` | SSH Username with Private Key | Username `ubuntu` with `.pem` Private Key |
+| `aws-account-id` | Secret Text | 12-digit AWS Account ID |
+| `aws-region` | Secret Text | AWS Region (e.g. `us-east-1` or `ap-south-1`) |
+| `ecr-repo-name` | Secret Text | ECR Repository Name (`flask-student-app`) |
+| `ec2-public-ip` | Secret Text | EC2 Public IP address |
 | `ec2-username` | Secret Text | `ubuntu` |
-| `notify-email` | Secret Text | `jfriday464@gmail.com` |
-| `mongo-uri` | Secret Text | MongoDB Atlas (`mongodb+srv://jfriday464_db_user:...@student-app.9lsiu8w.mongodb.net/...`) |
+| `notify-email` | Secret Text | Recipient Email Address for build notifications |
+| `mongo-uri` | Secret Text | Production MongoDB URI (`student_db`) |
+| `test-mongo-uri` | Secret Text | Test Suite MongoDB URI (`test_student_db`) |
 | `flask-secret-key` | Secret Text | Flask session secret key |
 
 > **Note on Credentials Scope**:

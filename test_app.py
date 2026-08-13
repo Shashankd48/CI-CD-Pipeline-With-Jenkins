@@ -6,10 +6,11 @@ from bson.objectid import ObjectId
 
 load_dotenv()
 
+
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
-    test_uri = os.getenv("TEST_MONGO_URI", "mongodb://localhost:27017/test_student_db")
+    test_uri = os.getenv("TEST_MONGO_URI")
     app.config["MONGO_URI"] = test_uri
     client = app.test_client()
 
@@ -32,6 +33,8 @@ def client():
     with app.app_context():
         mongo.cx.drop_database(db_name)
         mongo.db = old_db
+
+
 
 
 

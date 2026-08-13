@@ -173,8 +173,9 @@ Navigate to **Manage Jenkins** -> **Credentials** -> **System** -> **Global cred
 | 6 | `ec2-public-ip` | Secret text | **Secret** | `<YOUR_EC2_PUBLIC_IP>` *(e.g. 13.x.x.x from EC2 Console)* |
 | 7 | `ec2-username` | Secret text | **Secret** | `ubuntu` |
 | 8 | `notify-email` | Secret text | **Secret** | `<YOUR_EMAIL_ADDRESS>` *(e.g. user@gmail.com)* |
-| 9 | `mongo-uri` | Secret text | **Secret** | `mongodb+srv://<username>:<password>@cluster0.mongodb.net/student_db` |
-| 10 | `flask-secret-key` | Secret text | **Secret** | `<YOUR_SECRET_KEY>` |
+| 9 | `mongo-uri` | Secret text | **Secret** | `mongodb+srv://<user>:<password>@cluster0.mongodb.net/student_db?appName=student-app` |
+| 10 | `test-mongo-uri` | Secret text | **Secret** | `mongodb+srv://<user>:<password>@cluster0.mongodb.net/test_student_db?appName=student-app` |
+| 11 | `flask-secret-key` | Secret text | **Secret** | `<YOUR_SECRET_KEY>` |
 
 ---
 

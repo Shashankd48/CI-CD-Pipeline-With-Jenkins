@@ -41,10 +41,14 @@ pipeline {
         stage('3. Test Gate') {
             steps {
                 echo 'Running Pytest test suite...'
-                withCredentials([string(credentialsId: 'mongo-uri', variable: 'MONGO_URI'), string(credentialsId: 'flask-secret-key', variable: 'SECRET_KEY')]) {
+                withCredentials([
+                    string(credentialsId: 'test-mongo-uri', variable: 'TEST_MONGO_URI'),
+                    string(credentialsId: 'mongo-uri', variable: 'MONGO_URI'),
+                    string(credentialsId: 'flask-secret-key', variable: 'SECRET_KEY')
+                ]) {
                     sh '''
                         . venv/bin/activate
-                        TEST_MONGO_URI="${MONGO_URI}" pytest test_app.py
+                        pytest test_app.py
                     '''
                 }
             }

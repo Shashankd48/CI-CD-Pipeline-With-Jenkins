@@ -316,6 +316,46 @@ test_app.py .....                                                        [100%]
 
 ---
 
+## 🛠️ Deployment Method Rationale (Why SSH?)
+
+**Why SSH-Based Deployment Was Chosen**:
+SSH-based deployment was selected over AWS Systems Manager (SSM) because SSH is lightweight, agentless, universally supported across all Linux distributions, and enables direct, atomic container deployment commands (`docker pull`, `docker stop`, `docker run`) over port 22 using Jenkins' native `sshUserPrivateKey` credential binding. This eliminates the operational overhead of installing and managing SSM Agent daemons while ensuring encrypted, key-authenticated remote command execution.
+
+---
+
+## 🔄 Manual Deployment Reproduction Steps
+
+If the automated Jenkins CI/CD pipeline becomes temporarily unavailable, a DevOps engineer can manually reproduce the deployment on the EC2 instance by executing the following commands:
+
+```bash
+# 1. SSH into the EC2 Instance
+ssh -i <your-key.pem> ubuntu@<EC2_PUBLIC_IP>
+
+# 2. Authenticate Docker CLI to Amazon ECR
+aws ecr get-login-password --region <AWS_REGION> | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com
+
+# 3. Pull the latest container image from ECR
+docker pull <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/flask-student-app:latest
+
+# 4. Stop and remove the existing application container
+docker stop flask-app || true
+docker rm flask-app || true
+
+# 5. Run the new container with production environment variables
+docker run -d \
+  --name flask-app \
+  --restart unless-stopped \
+  -p 5000:5000 \
+  -e MONGO_URI="<YOUR_MONGO_URI>" \
+  -e SECRET_KEY="<YOUR_SECRET_KEY>" \
+  <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/flask-student-app:latest
+
+# 6. Verify health status of the newly deployed container
+curl -i http://localhost:5000/health
+```
+
+---
+
 ## 📄 License & Maintainer
 - **Project**: CI/CD Pipeline Assignment
 - **Maintainer**: DevOps Engineering Student

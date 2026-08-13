@@ -32,7 +32,7 @@ This repository contains the complete implementation of an automated CI/CD pipel
 
 ---
 
-## 🛠️ Step-by-Step Implementation Guide & Evidence
+## 🛠️ Step-by-Step Implementation
 
 ### Step 1: AWS IAM Roles & User Creation
 
@@ -268,21 +268,21 @@ The CI/CD pipeline executes across 8 stages defined in [Jenkinsfile](file:///d:/
 7. **Deploy Verification Gate**: Sends HTTP request to `http://${EC2_HOST}:5000/health` to verify HTTP 200 status.
 8. **Post Notification**: Dispatches HTML status email notification to recipient.
 
-#### **Evidence: Quality Gate Enforcement (Test Failure Stop)**
+#### **Quality Gate Enforcement (Test Failure Stop)**
 ![PyTest Failure Gate](screenshots/17-initial-test-cases-failing.png)
 *Figure 11a: Quality Gate demonstration - pipeline execution halted at Stage 3 due to unit test failure, blocking bad deployment.*
 
 ![Initial Build Success](screenshots/19-initial-build-success-but email failed.png)
 *Figure 11b: Successful build execution prior to final SMTP configuration.*
 
-#### **Evidence: Intentional Failure Alert Testing**
+#### **Intentional Failure Alert Testing**
 ![Pipeline Failure Step 1](screenshots/21-intentional-build-failed-pipeline-broken-step-1.png)
 *Figure 12a: Intentional broken build triggering stage failure in Jenkins.*
 
 ![Failure Email Received](screenshots/21-intentional-build-failed-emaiil-received-step-2.png)
 *Figure 12b: Automated HTML alert email received in Gmail inbox detailing build failure.*
 
-#### **Evidence: End-to-End Successful Deployment & Live Verification**
+#### **End-to-End Successful Deployment & Live Verification**
 ![Pipeline Success Stages](screenshots/22-1-all-steps-of-pipeline-successfully-completed.png)
 *Figure 13a: Complete 8-stage pipeline run passing in Jenkins Stage View.*
 

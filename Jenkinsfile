@@ -57,9 +57,9 @@ pipeline {
         stage('4. Build Multistage Docker Image') {
             steps {
                 echo "Building Multistage Docker image tagged with Git SHA: ${env.IMAGE_TAG}"
-                sh '''
+                sh """
                     docker build -t ${ECR_REGISTRY}/${ECR_REPO_NAME}:${env.IMAGE_TAG} .
-                '''
+                """
             }
         }
 
@@ -67,21 +67,21 @@ pipeline {
             steps {
                 echo 'Authenticating to Amazon ECR and pushing image...'
                 withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    sh '''
+                    sh """
                         aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
                         docker push ${ECR_REGISTRY}/${ECR_REPO_NAME}:${env.IMAGE_TAG}
-                    '''
+                    """
                 }
             }
         }
 
         stage('6. Deploy to EC2') {
             steps {
-                echo 'Deploying application and MongoDB LTS container to EC2 instance via SSH...'
+                echo 'Deploying application to EC2 instance via SSH...'
                 withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                     withCredentials([string(credentialsId: 'mongo-uri', variable: 'MONGO_URI'), string(credentialsId: 'flask-secret-key', variable: 'SECRET_KEY')]) {
-                        sh '''
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${EC2_USER}@${EC2_HOST} << EOF
+                        sh """
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${EC2_USER}@${EC2_HOST} << 'EOF'
                                 # 1. Authenticate to Amazon ECR
                                 aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
@@ -101,8 +101,7 @@ pipeline {
                                   -e SECRET_KEY="${SECRET_KEY}" \
                                   ${ECR_REGISTRY}/${ECR_REPO_NAME}:${env.IMAGE_TAG}
 EOF
-                        '''
-
+                        """
                     }
                 }
             }
@@ -111,16 +110,16 @@ EOF
         stage('7. Deploy Verification Gate') {
             steps {
                 echo 'Verifying application health status on EC2...'
-                sh '''
+                sh """
                     sleep 5
-                    STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${EC2_HOST}:5000/health)
-                    echo "Health check HTTP status: ${STATUS}"
-                    if [ "$STATUS" -ne 200 ]; then
+                    STATUS=\$(curl -s -o /dev/null -w "%{http_code}" http://${EC2_HOST}:5000/health)
+                    echo "Health check HTTP status: \${STATUS}"
+                    if [ "\$STATUS" -ne 200 ]; then
                         echo "Deployment verification gate failed! Response code was not HTTP 200."
                         exit 1
                     fi
                     echo "Deployment verification gate passed!"
-                '''
+                """
             }
         }
     }
